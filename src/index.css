@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Hide scrollbar for WebKit-based browsers (Chrome, Safari) */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for Firefox */
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+@keyframes dots {
+  0%,
+  20% {
+    content: ".";
+  }
+  40% {
+    content: "..";
+  }
+  60% {
+    content: "...";
+  }
+  80%,
+  100% {
+    content: "";
+  }
+}
+
+.dots::after {
+  content: "";
+  animation: dots 1.5s infinite steps(4, jump-none);
+}
+
+/* Add this to a global or component-level stylesheet */
+.custom-swiper .swiper-pagination-bullet {
+  background-color: white; /* Inactive color */
+  opacity: 0.6;
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px; /* Makes them round */
+  margin: 0 4px;
+  transition: all 0.3s ease;
+}
+
+.custom-swiper .swiper-pagination-bullet-active {
+  background-color: #fa2020; /* Active color */
+  opacity: 1;
+  width: 24px; /* Wider to create pill/bar look */
+}

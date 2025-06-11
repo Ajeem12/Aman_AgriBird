@@ -15,10 +15,7 @@ import useLocationStore from "../store/locationStore";
 
 const Navbar = () => {
   const { city, pincode } = useLocationStore();
-  console.log("City:", city, "Pincode:", pincode);
-
   const openPincodeModal = useModalStore((state) => state.openPincodeModal);
-
   const [showSearch, setShowSearch] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -26,6 +23,8 @@ const Navbar = () => {
   const { profile } = useGetProfile();
 
   const { user } = useAuthStore();
+  console.log("user", user);
+
   const { searchProducts } = useSearch();
   const navigate = useNavigate();
 

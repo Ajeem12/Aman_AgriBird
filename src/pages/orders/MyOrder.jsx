@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFetchOrderHistory } from "../../hooks/useOrderHistory";
 import { Link } from "react-router-dom";
 import hashids from "../../util/hashids";
 import { useCancelOrder } from "../../hooks/useCancelOrder";
+// import { useOrderVerificationVendor } from "../../hooks/useOrderVerificationVender";
 import Loader from "../../components/Loader";
 
 export default function MyOrders() {
@@ -14,6 +15,7 @@ export default function MyOrders() {
     refetch,
   } = useFetchOrderHistory();
   const { mutate: cancelOrder, isLoading: isCanceling } = useCancelOrder();
+  // const { mutate: sendOrderVerification } = useOrderVerificationVendor();
 
   const [cancelingOrderId, setCancelingOrderId] = useState(null);
   const [selectedReason, setSelectedReason] = useState("");
@@ -31,6 +33,17 @@ export default function MyOrders() {
       }
     );
   };
+
+  // useEffect(() => {
+  //   if (orders && Array.isArray(orders)) {
+  //     orders.forEach((order) => {
+  //       sendOrderVerification({
+  //         orderId: order.id,
+  //         link: `${window.location.origin}/order/verify/${order.id}`,
+  //       });
+  //     });
+  //   }
+  // }, [orders, sendOrderVerification]);
 
   if (isLoading)
     return (

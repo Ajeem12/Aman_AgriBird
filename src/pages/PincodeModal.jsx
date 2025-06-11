@@ -4,26 +4,37 @@ import Select from "react-select";
 import useLocationStore from "../store/locationStore";
 import { useModalStore } from "../store/uiStore";
 import { data } from "../util/data";
+import { useCity } from "../hooks/useCity";
 import toast from "react-hot-toast";
 
 const PincodeModal = () => {
+  const { data: cityData, isLoading } = useCity();
+  console.log("City Data:", cityData);
+
   const { city, pincode, setCity, setPincode } = useLocationStore();
   const closePincodeModal = useModalStore((state) => state.closePincodeModal);
 
-  const cityOptions = data.map((loc) => ({
-    value: loc.city,
-    label: loc.city,
-  }));
+  const cityOptions = cityData
+    ? cityData
+        .filter((loc) => loc.status === 1)
+        .map((loc) => ({
+          value: loc.city_name,
+          label: loc.city_name,
+          pincodes: loc.pincode_details,
+        }))
+    : [];
 
   const selectedCityData = city
-    ? data.find((loc) => loc.city === city.value)
+    ? cityOptions.find((loc) => loc.value === city.value)
     : null;
 
   const pincodeOptions = selectedCityData
-    ? selectedCityData.pincodes.map((pin) => ({
-        value: pin,
-        label: pin,
-      }))
+    ? selectedCityData.pincodes
+        .filter((pin) => pin.status === 1)
+        .map((pin) => ({
+          value: pin.pincode,
+          label: pin.pincode,
+        }))
     : [];
 
   const handleContinue = () => {

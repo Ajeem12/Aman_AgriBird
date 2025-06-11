@@ -6,12 +6,17 @@ import {
   useUpdateAddress,
 } from "../hooks/useAddress";
 import Loader from "../components/Loader";
+import { useCity } from "../hooks/useCity"; // Add this import
+import useLocationStore from "../store/locationStore";
+import Select from "react-select";
 
 const Address = () => {
   const { data: addressData = [], isLoading, refetch } = useAddress();
   const addAddressMutation = useAddAddress();
   const deleteAddressMutation = useDeleteAddress();
   const updateAddressMutation = useUpdateAddress();
+  const { city, pincode } = useLocationStore();
+  const { data: cityData } = useCity(); // Fetch city data
 
   const [addresses, setAddresses] = useState([]);
   const [newAddress, setNewAddress] = useState({
@@ -24,6 +29,32 @@ const Address = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
   const [error, setError] = useState("");
+
+  // Prepare city options for dropdown
+  const cityOptions = cityData
+    ? cityData
+        .filter((c) => c.status === 1)
+        .map((c) => ({
+          value: c.city_name,
+          label: c.city_name,
+          pincodes: c.pincode_details,
+        }))
+    : [];
+
+  // Find selected city object from cityOptions
+  const selectedCityOption = cityOptions.find(
+    (c) => c.value === newAddress.city
+  );
+
+  // Prepare pincode options for dropdown
+  const pincodeOptions = selectedCityOption
+    ? selectedCityOption.pincodes
+        .filter((pin) => pin.status === 1)
+        .map((pin) => ({
+          value: pin.pincode,
+          label: pin.pincode,
+        }))
+    : [];
 
   useEffect(() => {
     if (addressData?.data) {
@@ -94,6 +125,22 @@ const Address = () => {
     setError("");
   };
 
+  // Update handleInputChange to support Select
+  const handleCityChange = (option) => {
+    setNewAddress({
+      ...newAddress,
+      city: option ? option.value : "",
+      pincode: "", // reset pincode when city changes
+    });
+  };
+
+  const handlePincodeChange = (option) => {
+    setNewAddress({
+      ...newAddress,
+      pincode: option ? option.value : "",
+    });
+  };
+
   if (isLoading)
     return (
       <div className="text-center text-gray-600 flex flex-col items-center">
@@ -107,6 +154,28 @@ const Address = () => {
 
   return (
     <div className="">
+      {/* Show selected city and its pincodes */}
+      {city && (
+        <div className="">
+          {/* <p className="font-semibold text-gray-700">
+            Selected City: <span className="text-blue-700">{city.label}</span>
+          </p> */}
+          {pincodeOptions.length > 0 && (
+            <div className="mt-1">
+              <span className="text-gray-600">Available Pincodes: </span>
+              {pincodeOptions.map((pin) => (
+                <span
+                  key={pin.id}
+                  className="inline-block bg-gray-100 px-2 py-1 rounded mr-2 text-sm"
+                >
+                  {pin.pincode}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       <h1 className="text-2xl font-bold text-gray-800 mb-4 ml-3 mt-4 sm:mt-0">
         My Addresses
       </h1>
@@ -173,14 +242,33 @@ const Address = () => {
               placeholder="Phone Number"
               className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
             />
-            <input
-              type="text"
-              name="pincode"
-              value={newAddress.pincode}
-              onChange={handleInputChange}
-              placeholder="Pincode"
-              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+
+            {/* City Dropdown */}
+            <Select
+              options={cityOptions}
+              value={
+                cityOptions.find((c) => c.value === newAddress.city) || null
+              }
+              onChange={handleCityChange}
+              placeholder="Select City"
+              isClearable
+              className="w-full"
             />
+
+            {/* Pincode Dropdown */}
+            <Select
+              options={pincodeOptions}
+              value={
+                pincodeOptions.find((p) => p.value === newAddress.pincode) ||
+                null
+              }
+              onChange={handlePincodeChange}
+              placeholder="Select Pincode"
+              isClearable
+              isDisabled={!newAddress.city}
+              className="w-full"
+            />
+
             <textarea
               name="address"
               value={newAddress.address}

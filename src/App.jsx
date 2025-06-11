@@ -2,6 +2,7 @@ import { Suspense, lazy, useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Layout from "./layout/Layout";
+import VendoreLayout from "./layout/VenderLayot";
 import { useAuthStore } from "./store/authStore";
 import { useModalStore } from "./store/uiStore";
 import UpdatePass from "./pages/UpdatePass";
@@ -31,6 +32,12 @@ const OrderDetails = lazy(() => import("./pages/orders/OrderDetails"));
 const Address = lazy(() => import("./pages/Address"));
 const Order = lazy(() => import("./pages/Order"));
 const ThankYou = lazy(() => import("./pages/ThankYou"));
+const VBLogin = lazy(() => import("./pages/vender/VBLogin"));
+const VendorOrders = lazy(() => import("./pages/vender/VenderOrders"));
+const VendorHome = lazy(() => import("./pages/vender/VendorHome"));
+const VendorOrderDetails = lazy(() =>
+  import("./pages/vender/VendorOrderDetails")
+);
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children }) => {
@@ -64,6 +71,10 @@ const router = createBrowserRouter([
       {
         path: "/cart",
         element: withSuspense(<Cart />),
+      },
+      {
+        path: "/vendor-orders",
+        element: withSuspense(<VendorOrders />),
       },
       {
         path: "/product/:slug/:id",
@@ -144,6 +155,33 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: withSuspense(<Login />),
+  },
+  {
+    path: "/vendor",
+    element: <VendoreLayout />,
+    children: [
+      {
+        index: true,
+        element: withSuspense(<VendorHome />),
+      },
+      {
+        path: "today-orders",
+        element: withSuspense(<VendorHome />),
+      },
+      {
+        path: "all-orders",
+        element: withSuspense(<VendorOrders />),
+      },
+      {
+        path: "vendor-order/:id",
+        element: withSuspense(<VendorOrderDetails />),
+      },
+    ],
+  },
+
+  {
+    path: "/vendor-login",
+    element: withSuspense(<VBLogin />),
   },
 ]);
 

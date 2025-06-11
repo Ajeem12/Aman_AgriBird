@@ -14,6 +14,7 @@ const User = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuthStore();
+  // console.log(user);
   const logout = useAuthStore((state) => state.logout);
 
   const handleLogout = async () => {

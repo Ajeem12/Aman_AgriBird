@@ -38,6 +38,10 @@ const VendorHome = lazy(() => import("./pages/vender/VendorHome"));
 const VendorOrderDetails = lazy(() =>
   import("./pages/vender/VendorOrderDetails")
 );
+const DeliveryBoy = lazy(() => import("./pages/delivery_boy/DeliveryBoy"));
+const DelOrderDetails = lazy(() =>
+  import("./pages/delivery_boy/DelOrderDetial")
+);
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children }) => {
@@ -162,15 +166,15 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: withSuspense(<VendorHome />),
-      },
-      {
-        path: "today-orders",
-        element: withSuspense(<VendorHome />),
-      },
-      {
-        path: "all-orders",
         element: withSuspense(<VendorOrders />),
+      },
+      {
+        path: "delivery-boy",
+        element: withSuspense(<DeliveryBoy />),
+      },
+      {
+        path: "delivery-order/:id",
+        element: withSuspense(<DelOrderDetails />),
       },
       {
         path: "vendor-order/:id",

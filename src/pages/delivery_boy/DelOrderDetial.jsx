@@ -1,10 +1,11 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { useVendorOrderDetails } from "../../hooks/vendor/useVendorOrderDetails";
-import { useApproveVendorOrder } from "../../hooks/vendor/useApproveVendorOrder";
+import { useDelOrderDetails } from "../../hooks/delivery-boy/useDelOrderDetail";
+import { useChangeStatus } from "../../hooks/delivery-boy/useChangeStatus";
 import hashids from "../../util/hashids";
 import Loader from "../../components/Loader";
 import toast from "react-hot-toast";
+
 const getStatusLabel = (order_status) => {
   switch (order_status) {
     case 0:
@@ -29,15 +30,16 @@ const statusOptions = [
   { value: 0, label: "Pending" },
   { value: 1, label: "Order Processed" },
   { value: 2, label: "Out for Delivery" },
+  { value: 3, label: "Delivered" },
 ];
 
-const VendorOrderDetails = () => {
+const DelOrderDetails = () => {
   const { id } = useParams();
   const decoded = hashids.decode(id);
   const orderId = decoded[0];
 
-  const { data, isLoading, error, refetch } = useVendorOrderDetails(orderId);
-  const { mutate, isLoading: isUpdating } = useApproveVendorOrder();
+  const { data, isLoading, error, refetch } = useDelOrderDetails(orderId);
+  const { mutate, isLoading: isUpdating } = useChangeStatus();
 
   const handleStatusChange = (e) => {
     const newStatus = parseInt(e.target.value);
@@ -91,12 +93,16 @@ const VendorOrderDetails = () => {
           </label>
           <select
             value={order.order_status}
-            onChange={handleStatusChange}
+            onChange={(e) => handleStatusChange(e, order.id)}
             disabled={isUpdating}
             className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             {statusOptions.map((opt) => (
-              <option key={opt.value} value={opt.value}>
+              <option
+                key={opt.value}
+                value={opt.value}
+                disabled={opt.value === 0 || opt.value === 1 || opt.value === 2}
+              >
                 {opt.label}
               </option>
             ))}
@@ -131,7 +137,7 @@ const VendorOrderDetails = () => {
             <strong>Delivery Charge:</strong> ₹{order.delivery_charge}
           </p>
           <p>
-            <strong>Vendor OTP:</strong> {order.vendor_otp || "N/A"}
+            <strong>Vendor OTP:</strong> {order.vendor_otp || ""}
           </p>
         </div>
       </div>
@@ -185,7 +191,7 @@ const VendorOrderDetails = () => {
             <strong>Email:</strong> {order.user_details?.email || ""}
           </p>
           <p>
-            <strong>Mobile:</strong> {order.user_details?.mobile}
+            <strong>Mobile:</strong> {order.user_details?.mobile || ""}
           </p>
         </div>
       </div>
@@ -193,4 +199,4 @@ const VendorOrderDetails = () => {
   );
 };
 
-export default VendorOrderDetails;
+export default DelOrderDetails;

@@ -1,5 +1,5 @@
 import React from "react";
-import { useVendorOrders } from "../../hooks/vendor/useVenderOrders";
+import { useDeliveryBoyOrders } from "../../hooks/delivery-boy/useDeliveryBoyOrder";
 import { Link } from "react-router-dom";
 import hashids from "../../util/hashids";
 
@@ -23,8 +23,8 @@ const getStatusLabel = (order_status) => {
   }
 };
 
-const VendorOrders = () => {
-  const { data, isLoading, error } = useVendorOrders(true);
+const DeliveryBoy = () => {
+  const { data, isLoading, error } = useDeliveryBoyOrders(true);
 
   if (isLoading)
     return (
@@ -46,13 +46,13 @@ const VendorOrders = () => {
 
           return (
             <Link
-              to={`/vendor/vendor-order/${hashId}`}
+              to={`/vendor/delivery-order/${hashId}`}
               key={order.id}
               className="bg-white rounded-2xl shadow-md border hover:shadow-xl hover:scale-[1.01] transition-all duration-300 p-6 flex flex-col justify-between group"
             >
               <div className="flex justify-between items-start mb-4">
                 <h2 className="text-lg sm:text-xl font-bold text-blue-700">
-                  #{order.order_no}
+                  {order.order_no}
                 </h2>
                 <span
                   className={`text-xs sm:text-sm px-3 py-1 rounded-full font-semibold ${status.color}`}
@@ -93,4 +93,4 @@ const VendorOrders = () => {
   );
 };
 
-export default VendorOrders;
+export default DeliveryBoy;
